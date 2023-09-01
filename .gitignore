@@ -1,0 +1,5 @@
+.env
+__pycache__/
+bkpmodel/
+db/
+static/images/soft_indie_rock.mp3

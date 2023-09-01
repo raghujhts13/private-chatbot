@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='style/index.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>local chatbot</title>
+
+    <style>
+        
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="flex justify-between">
+            <div class="flex items-center space-x-3 px-4 lg:pr-12 pr-6">
+                <img height='30' width='30' src="{{url_for('static',filename='images/icon.png')}}" alt="icon">                       
+                <h2 class="org text-xl font-semibold leading-6">chatbot</h2>
+            </div>
+
+            <div class=" flex space-x-5 justify-center items-center">
+                <div class="relative">
+                    <a class="flex items-center rounded-full p-2 focus:outline-none" href="https://github.com/raghujhts13/text-to-sql" target="_blank">
+                      <img src="{{url_for('static',filename='images/github.png')}}" alt="User Avatar" class="w-6 h-6 rounded-full">
+                    </a>
+                    <div class="clock absolute top-0 right-9 lg:py-2 text-xl font-bold">
+                        <span id="clock"></span>
+                    </div> 
+                </div>              
+            </div>
+        </nav>
+    </header>
+    <main class="grid">
+        <div class="col-start-1 col-end-2 py-2">
+            <div class="chathistory rounded-md text-center p-1">
+                <button id="newchat" class="rounded-md w-full text-sm p-1 font-semibold">
+                    New Chat
+                </button><br>
+                <div class="chatfooter w-full justify-between">
+                    <button id="clearchat" class="rounded-md w-full text-sm p-1 font-semibold">
+                        Clear History
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-start-3 col-end-8 p-2">
+            <div class="chatwindow rounded-md">
+                <div id="filearea" class="flex justify-between">
+                    <button id="audiomodaloff" class="px-4">
+                        <img width="28" height="28" src="{{url_for('static',filename='images/audio-off.png')}}" alt="soundoff"/>
+                    </button>
+                    <button id="audiomodalon" class="px-4 hidden">
+                        <img width="28" height="28" src="{{url_for('static',filename='images/audio-on.png')}}" alt="soundon"/>
+                        <audio id="audio" src="{{url_for('static',filename='images/soft_indie_rock.mp3')}}" style="play-only: yes;"></audio>
+                    </button>
+                    <button id="filemodal" type="button" data-modal-toggle="default-modal" class="px-4">
+                        <img width="32" height="32" src="https://img.icons8.com/dusk/64/upload--v1.png" alt="upload--v1"/>
+                    </button>
+                </div>
+                <div id="allchats">
+                    <div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
+                        <div>
+                            <img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/>
+                        </div>
+                        <p class="text-xs botbody">Hi, I am your personal chatbot. You would be able to upload and view your files, 
+                            ask me questions about them and retain upto 5 chat sessions/ change the model to suit your task. <br> For better results try to be more 
+                            specific with what you ask for and set up a general context before you start chatting. <br> I also believe
+                            that listening to music soothes you, you can toggle the audio button on or off based on your choice.
+                        </p>
+                    </div>
+                </div>
+                <!-- input place -->
+                <div class="searcharea w-full px-1">
+                    <textarea id="inputarea" class="text-area text-sm w-full rounded-lg p-2" rows="1" placeholder="ask your data"></textarea>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="sticky bottom-0">
+        <p class="footer-text text-center">
+            © 2023 MIT LICENSE
+        </p>
+    </footer>
+    <!-- loader -->
+    <div id="modal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md rounded-lg z-50 p-6 w-96">
+        <p class="text-center modalfooter">
+            Your document is being processed <br>
+            <div id="modal-body">
+                <img id="moving-image" src="{{url_for('static',filename='images/loader.gif')}}" alt="loader" height="100" width="100">
+            </div>
+        </p>
+    </div>
+    <!-- loader -->
+    <!-- Main modal -->
+    <div id="default-modal" data-modal-show="false" aria-hidden="true" class="hidden overflow-x-hidden overflow-y-auto fixed h-modal md:h-full top-4 left-0 right-0 md:inset-0 z-50 justify-center items-center">
+        <div class="modalbody relative max-w-xl px-0 md:h-auto rounded-lg">
+            <!-- Modal content -->
+            <div class="rounded-lg shadow relative">
+                <!-- Modal header -->
+                <div class="flex items-start justify-between p-2 rounded-t">
+                    <h5 id="modaltitle" class="text-gray-900 text-sm font-bold">
+                        Document Repository
+                    </h5>
+                    <button id="closemodal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1 inline-flex items-center" data-modal-toggle="default-modal">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div id="modalbody" class="p-1 space-y-1">
+                    <ul>
+                        {% for i in files %}
+                            <li class="px-1 flex justify-between">
+                                <span class="text-xs underline p-1">
+                                    {{i}}
+                                </span>
+                                <img class="delete" height="5px" width="10%" src="{{url_for('static',filename='images/trash.png')}}" alt="delete">
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!-- Modal footer -->
+                <div class="modalfooter flex space-x-2 items-center p-2 rounded-b">
+                    <div class="text-xs font-semibold">
+                        <input type="file" name="file" id="inputfile">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/flowbite@1.4.4/dist/flowbite.js"></script>
+<script src="{{url_for('static',filename='script/clock.js')}}"></script>
+    <script>
+        const inputElement = document.getElementById("inputfile");
+        inputElement.addEventListener("change", handleFiles, false);
+        function handleFiles() {
+            const fileList = this.files[0]; /* now you can work with the file list */
+            // Create a FormData object to send the Blob
+            var formData = new FormData();
+            formData.append('file', fileList, fileList.name);
+            $("#closemodal").click();
+            $("#modal").removeClass('hidden');
+            // Send the FormData to the Flask endpoint using fetch
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                window.location.href = '/'
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Auto-adjust the textarea's height based on content
+        const textArea = document.querySelector('#inputarea');
+        textArea.addEventListener('input', function () {
+          this.scrollLeft = this.scrollWidth;
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        function scrollToBottom() {
+        const container = document.getElementById('allchats');
+        container.scrollTop = container.scrollHeight;
+        }
+
+        const textarea = document.getElementById('inputarea');
+        // Form submission
+        textarea.addEventListener('keydown', function(event) {
+        if (event.keyCode === 13) { // Enter key
+            event.preventDefault(); // Prevent default Enter behavior (newline)
+            const content = textarea.value;
+            $("#allchats").append(`<div class="rounded-md userarea p-3 col-start-2 col-end-8 chatmsg">
+                        <div>
+                            <img width="20" height="20" src="{{url_for("static",filename='images/user.png')}}" alt="bot"/>
+                        </div>
+                        <p class="text-xs">${content}</p>
+                    </div>`);
+            textarea.value='';
+            setTimeout(scrollToBottom, 1000);
+            $("#inputarea").attr('disabled','disabled');
+            // pass message to backend and get the answer
+            $.ajax({
+                type: 'POST',
+                url: '/qanda',
+                data: JSON.stringify({'query':content}),
+                contentType: 'application/json',
+                success: function(response) {
+                    $("#allchats").append(`<div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
+                        <div>
+                            <img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/>
+                        </div>
+                        <p class="text-xs botbody">${response}</p>
+                    </div>`);
+                    setTimeout(scrollToBottom, 1000);
+                    $("#inputarea").removeAttr('disabled');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    $("#inputarea").removeAttr('disabled');
+                }
+            });
+        }
+        });
+        // sound toggling
+        $("#audiomodalon").click(function(){
+            var audio = document.querySelector("audio");
+            audio.currentTime = 0;
+            audio.pause();
+            $("#audiomodalon").addClass('hidden');
+            $("#audiomodaloff").removeClass('hidden');
+        })
+        $("#audiomodaloff").click(function(){
+            $("#audiomodaloff").addClass('hidden');
+            $("#audiomodalon").removeClass('hidden');
+            const audioElement = document.querySelector("audio");
+            audioElement.currentTime = 3 * 60; // Set audio to start from 3.5 minutes
+            audioElement.volume = 0.2; // Set volume to 0.5
+            audioElement.play();
+        });
+        // delete file
+        $(".delete").click(function(){
+            let text = $(this).parent().find('span').text().trim();
+            $.ajax({
+                type: 'POST',
+                url: '/delete_document',
+                data: JSON.stringify({'document':text}),
+                contentType: 'application/json',
+                success: function(response) {
+                    if(response['status']==200){
+                        $("#closemodal").click();
+                        window.location.href = '/'
+                    }
+                    else{
+                        alert('unable to delete file')
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+</html>
