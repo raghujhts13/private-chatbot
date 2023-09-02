@@ -44,9 +44,9 @@
                 </button><br>
                 <div class="w-full">
                     <ul id="history" class="py-1">
-                        {% for i in range(chats) %}
+                        {% for i in range(chats|length) %}
                             <li class="flex justify-between {{ i+1 }}">
-                                <a href="#" class="session_{{ i+1 }} p-1">session {{ i+1 }}</a>
+                                <a href="#" class="session_{{ i+1 }} p-1">session {{ chats[i] }}</a>
                                 <span class="flex p-2">
                                     <button class="savethischat">
                                         <img class="align-center" height="10px" width="15px" src="{{url_for('static',filename='images/save.png')}}" alt="export chat">
@@ -60,7 +60,7 @@
                                 </span>
                             </li>
                         {% endfor %}
-                        {% for i in range(5-chats) %}
+                        {% for i in range(5- chats|length) %}
                             <li class="flex justify-between {{ i+1 }} hidden">
                                 <a href="#" class="session_{{ i+1 }} p-1">session {{ i+1 }}</a>
                                 <span class="flex p-2">
@@ -104,7 +104,7 @@
                         Hi, I am your personal chatbot. You would be able to upload and view your files, 
                         ask me questions about them and retain upto 5 chat sessions.Click on <span class="text-pink-500">New Chat</span> or load an existing one.
                     </div>
-                    <div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg hidden">
+                    <div class="rounded-md botarea p-3 col-start-2 col-end-8 initchatmsg hidden">
                         <div>
                             <img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/>
                         </div>
@@ -297,21 +297,24 @@ $("#newchat").click(function(){
         data: JSON.stringify({'session':numberOfLiElements}),
         contentType: 'application/json',
     }).done(function(message){
-        if(message=='limit exceeded'){
+        message = message['id'];
+        alert(message);
+        if(message==5){
             alert('only 5 sessions can be saved');
         }
         else{
-            if(numberOfLiElements==0){
-                $('.1').removeClass('hidden');
-            }
-            else{
-                for(let i=0;i<numberOfLiElements;i++){
-                alert(i+1);
-                $(`.${String(i+1)}`).removeClass('hidden');
-            }
-            }
-            $(".chatmsg").removeClass('hidden');
-            $('.emptychat').addClass('hidden');
+            // if(numberOfLiElements==0){
+            //     $('.1').removeClass('hidden');
+            // }
+            // else{
+            //     for(let i=0;i<numberOfLiElements;i++){
+            //         $(`.${i+2}`).removeClass('hidden');
+            //     }
+            // }
+            $(`.${message}`).removeClass('hidden');
+            $(".chatmsg").addClass('hidden');
+            $(".initchatmsg").addClass('hidden');
+            $('.emptychat').removeClass('hidden');
         }
     })
 })
@@ -345,8 +348,13 @@ $(".savethischat").click(function(){
         url: '/save_session',
         data: JSON.stringify({'session_id':chatid}),
         contentType: 'application/json',
-    }).done(function(){
-        alert('chat has been saved');
+    }).done(function(response){
+        if(response=='limit exceded'){
+            alert('maximum of 5 sessions can be saved');
+        }
+        else{
+            alert('chat has been saved');
+        }   
     })
 })
 
@@ -363,8 +371,13 @@ if (event.target.tagName === "A" && event.target.parentElement.tagName === "LI")
         data: JSON.stringify({'session_id':id}),
         contentType: 'application/json',
     }).done(function(response){
-        $('.emptychat').addClass('hidden');
-        for (const [key, value] of Object.entries(response)){
+        $(".emptychat").addClass('hidden');
+        if(Object.keys(response).length==0){
+            $(".initchatmsg").removeClass('hidden');
+            $(".chatmsg").addClass('hidden');
+        }
+        else{
+            for (const [key, value] of Object.entries(response)){
             $("#allchats").append(`<div class="rounded-md userarea p-3 col-start-2 col-end-8 chatmsg">
             <div><img width="20" height="20" src="{{url_for("static",filename='images/user.png')}}" alt="bot"/>
             </div><p class="text-xs">${key}</p></div>`);
@@ -372,10 +385,19 @@ if (event.target.tagName === "A" && event.target.parentElement.tagName === "LI")
             <div><img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/></div>
             <p class="text-xs botbody">${value}</p></div>`);
         }
+        }
     })
     }
 });
-
+$("#clearchat").click(function(){
+    $.ajax({
+        type:'GET',
+        url:'/delete_all_chats',
+        dataType:'json'
+    }).done(function(data){
+        window.location.href = '/';
+    })
+})
 
 </SCRIPT>
 </body>

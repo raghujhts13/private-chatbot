@@ -203,6 +203,16 @@ if os.path.exists(os.environ['json_file_path']):
 data = len(data)
 @app.get('/')
 def index():
+    data=[]
+    if os.path.exists(os.environ['json_file_path']):
+        # If the file exists, open it for appending data
+        with open(os.environ['json_file_path'], 'r') as file:
+            data1 = json.load(file)
+            for key in data1.keys():
+                if isinstance(data1[key], dict):
+                    if data1[key]:
+                        data.append(key)
+    data = [int(i) for i in data]
     return render_template('index.html',files=file_list, filepaths=file_paths,chats=data)
 @app.route('/upload',methods=['POST'])
 async def upload():
@@ -244,9 +254,18 @@ def qanda():
 def session_check():
     global questions
     global answers
-    curr_session = request.get_json()
-    curr_session = curr_session['session']+1
-    print(curr_session)
+    curr_session = []
+    if os.path.exists(os.environ['json_file_path']):
+        # If the file exists, open it for appending data
+        with open(os.environ['json_file_path'], 'r') as file:
+            data1 = json.load(file)
+            for key in data1.keys():
+                if isinstance(data1[key], dict):
+                    if data1[key]:
+                        curr_session.append(key)
+    curr_session = [int(i) for i in curr_session]
+    curr_session = [i+1 for i in range(5) if i+1 not in curr_session]
+    curr_session = min(curr_session)
     if curr_session<=5:
         # Check if the JSON file exists
         if os.path.exists(os.environ['json_file_path']):
@@ -267,7 +286,7 @@ def session_check():
         with open(os.environ['json_file_path'], 'w') as file:
             json.dump(data, file, indent=4)
         questions,answers = [],[]
-        return 'successfully saved the chat history'
+        return {'id':curr_session}
     else:
         return 'limit exceeded'
 
@@ -299,11 +318,18 @@ def save_session():
         data[key].update(dict(zip(questions,answers)))
         questions,answers = [],[]
     else:
-        data[key] = dict(zip(questions,answers))
-        questions,answers = [],[]
+        data1=[]
+        for key in data.keys():
+            if isinstance(data[key], dict):
+                if data[key]:
+                    data1.append(data1[key])
+        if len(data1)<=5:
+            data[key] = dict(zip(questions,answers))
+            questions,answers = [],[]
+        else:
+            return 'limit exceded'
     with open(os.environ['json_file_path'], 'w') as file:
         json.dump(data, file, indent=4)
-    print('worked till here')
     return 'deleted chat'
 
 @app.route('/export_session',methods=['POST'])
@@ -339,5 +365,10 @@ def load_session():
         print(data[key])
         return data[key]
 
+@app.route('/delete_all_chats',methods=['GET'])
+def delete_all_chats():
+    with open(os.environ['json_file_path'], 'w') as file:
+        json.dump({},file,indent=4)
+    return 'worked fine'
 if __name__ == '__main__':
     app.run(debug=True)

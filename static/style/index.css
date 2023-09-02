@@ -127,19 +127,19 @@ color: #6554AF;
 }
 
 
-.chatmsg{
+.chatmsg,.initchatmsg{
   font-family: 'Black Ops One', cursive;
   margin: 1%;
   width: 98%; /* Set the container to full width */
   display: flex; /* Use flexbox for easier alignment */
   align-items: center; /* Vertically center contents */
 }
-.chatmsg div{
+.chatmsg div,.initchatmsg div{
   width: 3%; /* 1/8th of the container's width (100% / 8) */
   max-width: 100%; /* Ensure the image doesn't exceed its container */
   height: auto; /* Maintain aspect ratio */
 }
-.chatmsg p{
+.chatmsg p,.initchatmsg p{
   width: 90%; /* 7/8th of the container's width (100% - 12.5%) */
   margin: 0; /* Remove default margins */
   padding: 0 10px; /* Optional padding for text */
