@@ -3,3 +3,4 @@ __pycache__/
 bkpmodel/
 db/
 static/images/soft_indie_rock.mp3
+history.json

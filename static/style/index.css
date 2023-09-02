@@ -32,7 +32,7 @@ color: #E5B8F4;
 white-space: nowrap;
 position: absolute;
 top: 5%;
-left: 8%;
+left: 5%;
 transform: translate(-50%, -50%);
 font-size: 3em;
 font-family: sans-serif;
@@ -118,8 +118,9 @@ color: #2f9e07;
 background-color: #2D033B;
 }
 #modaltitle {
-  font-family: 'Rubik Iso', cursive;
-color: #008f11;
+  /* font-family: 'Rubik Iso', cursive; */
+  font-family: 'Black Ops One', cursive;
+  color: #008f11;
 }
 .file-input{
 color: #6554AF;
@@ -142,16 +143,17 @@ color: #6554AF;
   width: 90%; /* 7/8th of the container's width (100% - 12.5%) */
   margin: 0; /* Remove default margins */
   padding: 0 10px; /* Optional padding for text */
+  color: #FE7BE5;
 }
 .botarea{
   background-color: #7464c7;
   color: whitesmoke;
 }
-.botbody{
-  font-family: 'Tulpen One', cursive;
-}
 .userarea{
   background-color: #9897e2;
+}
+.userarea p{
+  color: #512B81;
 }
 
 #modal{
@@ -181,3 +183,16 @@ color: #6554AF;
 .modalfooter{
   color: #008f11;
 }
+#history li{
+  color: white;
+  text-align: end;
+}
+#history li:hover{
+  color: #4D2DB7;
+}
+#history li{
+  text-align: left;
+}
+/* #history li span{
+  text-align: end;
+} */

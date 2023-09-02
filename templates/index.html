@@ -6,6 +6,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{url_for('static',filename='style/index.css')}}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Handjet&display=swap" rel="stylesheet">
     <title>local chatbot</title>
 
     <style>
@@ -16,13 +20,13 @@
     <header>
         <nav class="flex justify-between">
             <div class="flex items-center space-x-3 px-4 lg:pr-12 pr-6">
-                <img height='30' width='30' src="{{url_for('static',filename='images/icon.png')}}" alt="icon">                       
+                <!-- <img height='30' width='30' src="{{url_for('static',filename='images/icon.png')}}" alt="icon">                        -->
                 <h2 class="org text-xl font-semibold leading-6">chatbot</h2>
             </div>
 
             <div class=" flex space-x-5 justify-center items-center">
                 <div class="relative">
-                    <a class="flex items-center rounded-full p-2 focus:outline-none" href="https://github.com/raghujhts13/text-to-sql" target="_blank">
+                    <a class="flex items-center rounded-full p-2 focus:outline-none" href="https://github.com/raghujhts13/private-chatbot" target="_blank">
                       <img src="{{url_for('static',filename='images/github.png')}}" alt="User Avatar" class="w-6 h-6 rounded-full">
                     </a>
                     <div class="clock absolute top-0 right-9 lg:py-2 text-xl font-bold">
@@ -38,6 +42,42 @@
                 <button id="newchat" class="rounded-md w-full text-sm p-1 font-semibold">
                     New Chat
                 </button><br>
+                <div class="w-full">
+                    <ul id="history" class="py-1">
+                        {% for i in range(chats) %}
+                            <li class="flex justify-between {{ i+1 }}">
+                                <a href="#" class="session_{{ i+1 }} p-1">session {{ i+1 }}</a>
+                                <span class="flex p-2">
+                                    <button class="savethischat">
+                                        <img class="align-center" height="10px" width="15px" src="{{url_for('static',filename='images/save.png')}}" alt="export chat">
+                                    </button>
+                                    <button class="delthischat">
+                                        <img height="10px" width="15px" src="{{url_for('static',filename='images/delchat.png')}}" alt="delete chat">
+                                    </button>
+                                    <button class="exportthischat">
+                                        <img class="align-center" height="10px" width="15px" src="{{url_for('static',filename='images/export.png')}}" alt="export chat">
+                                    </button>
+                                </span>
+                            </li>
+                        {% endfor %}
+                        {% for i in range(5-chats) %}
+                            <li class="flex justify-between {{ i+1 }} hidden">
+                                <a href="#" class="session_{{ i+1 }} p-1">session {{ i+1 }}</a>
+                                <span class="flex p-2">
+                                    <button class="savethischat">
+                                        <img class="align-center" height="10px" width="15px" src="{{url_for('static',filename='images/save.png')}}" alt="export chat">
+                                    </button>
+                                    <button class="delthischat">
+                                        <img height="10px" width="15px" src="{{url_for('static',filename='images/delchat.png')}}" alt="delete chat">
+                                    </button>
+                                    <button class="exportthischat">
+                                        <img class="align-center" height="10px" width="15px" src="{{url_for('static',filename='images/export.png')}}" alt="export chat">
+                                    </button>
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 <div class="chatfooter w-full justify-between">
                     <button id="clearchat" class="rounded-md w-full text-sm p-1 font-semibold">
                         Clear History
@@ -60,14 +100,19 @@
                     </button>
                 </div>
                 <div id="allchats">
-                    <div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
+                    <div class="rounded-md p-3 col-start-2 col-end-8 emptychat px-5 py-12">
+                        Hi, I am your personal chatbot. You would be able to upload and view your files, 
+                        ask me questions about them and retain upto 5 chat sessions.Click on <span class="text-pink-500">New Chat</span> or load an existing one.
+                    </div>
+                    <div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg hidden">
                         <div>
                             <img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/>
                         </div>
                         <p class="text-xs botbody">Hi, I am your personal chatbot. You would be able to upload and view your files, 
-                            ask me questions about them and retain upto 5 chat sessions/ change the model to suit your task. <br> For better results try to be more 
+                            ask me questions about them and retain upto 5 chat sessions. <br> For better results try to be more 
                             specific with what you ask for and set up a general context before you start chatting. <br> I also believe
-                            that listening to music soothes you, you can toggle the audio button on or off based on your choice.
+                            that listening to music soothes you, you can toggle the audio button <span class="text-green-500">on</span> or 
+                            <span class="text-red-500">off</span> based on your choice.
                         </p>
                     </div>
                 </div>
@@ -110,11 +155,11 @@
                 <!-- Modal body -->
                 <div id="modalbody" class="p-1 space-y-1">
                     <ul>
-                        {% for i in files %}
+                        {% for i in range(files|length) %}
                             <li class="px-1 flex justify-between">
-                                <span class="text-xs underline p-1">
-                                    {{i}}
-                                </span>
+                                <a class="text-xs underline p-1" href={{ filepaths[i] }} target="_blank">
+                                    {{ files[i] }}
+                                </a>
                                 <img class="delete" height="5px" width="10%" src="{{url_for('static',filename='images/trash.png')}}" alt="delete">
                             </li>
                         {% endfor %}
@@ -133,113 +178,205 @@
 
 <script src="https://unpkg.com/flowbite@1.4.4/dist/flowbite.js"></script>
 <script src="{{url_for('static',filename='script/clock.js')}}"></script>
-    <script>
-        const inputElement = document.getElementById("inputfile");
-        inputElement.addEventListener("change", handleFiles, false);
-        function handleFiles() {
-            const fileList = this.files[0]; /* now you can work with the file list */
-            // Create a FormData object to send the Blob
-            var formData = new FormData();
-            formData.append('file', fileList, fileList.name);
-            $("#closemodal").click();
-            $("#modal").removeClass('hidden');
-            // Send the FormData to the Flask endpoint using fetch
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                window.location.href = '/'
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        // Auto-adjust the textarea's height based on content
-        const textArea = document.querySelector('#inputarea');
-        textArea.addEventListener('input', function () {
-          this.scrollLeft = this.scrollWidth;
-          this.style.height = 'auto';
-          this.style.height = (this.scrollHeight) + 'px';
+<!-- <script src="{{url_for('static',filename='script/index.js')}}"></script> -->
+<SCRIPT>
+    const inputElement = document.getElementById("inputfile");
+inputElement.addEventListener("change", handleFiles, false);
+function handleFiles() {
+    const fileList = this.files[0]; /* now you can work with the file list */
+    // Create a FormData object to send the Blob
+    var formData = new FormData();
+    formData.append('file', fileList, fileList.name);
+    $("#closemodal").click();
+    $("#modal").removeClass('hidden');
+    // Send the FormData to the Flask endpoint using fetch
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        window.location.href = '/'
+        }).catch(error => {
+            console.error('Error:', error);
         });
+    }
 
-        function scrollToBottom() {
-        const container = document.getElementById('allchats');
-        container.scrollTop = container.scrollHeight;
-        }
+    // Auto-adjust the textarea's height based on content
+const textArea = document.querySelector('#inputarea');
+textArea.addEventListener('input', function () {
+    this.scrollLeft = this.scrollWidth;
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+});
 
-        const textarea = document.getElementById('inputarea');
-        // Form submission
-        textarea.addEventListener('keydown', function(event) {
-        if (event.keyCode === 13) { // Enter key
-            event.preventDefault(); // Prevent default Enter behavior (newline)
-            const content = textarea.value;
-            $("#allchats").append(`<div class="rounded-md userarea p-3 col-start-2 col-end-8 chatmsg">
-                        <div>
-                            <img width="20" height="20" src="{{url_for("static",filename='images/user.png')}}" alt="bot"/>
-                        </div>
-                        <p class="text-xs">${content}</p>
-                    </div>`);
-            textarea.value='';
-            setTimeout(scrollToBottom, 1000);
-            $("#inputarea").attr('disabled','disabled');
-            // pass message to backend and get the answer
-            $.ajax({
-                type: 'POST',
-                url: '/qanda',
-                data: JSON.stringify({'query':content}),
-                contentType: 'application/json',
-                success: function(response) {
-                    $("#allchats").append(`<div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
-                        <div>
-                            <img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/>
-                        </div>
-                        <p class="text-xs botbody">${response}</p>
-                    </div>`);
-                    setTimeout(scrollToBottom, 1000);
-                    $("#inputarea").removeAttr('disabled');
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                    $("#inputarea").removeAttr('disabled');
-                }
-            });
-        }
+function scrollToBottom() {
+    const container = document.getElementById('allchats');
+    container.scrollTop = container.scrollHeight;
+    }
+
+const textarea = document.getElementById('inputarea');
+// Form submission
+textarea.addEventListener('keydown', function(event) {
+if (event.keyCode === 13) { // Enter key
+    event.preventDefault(); // Prevent default Enter behavior (newline)
+    const content = textarea.value;
+    $("#allchats").append(`<div class="rounded-md userarea p-3 col-start-2 col-end-8 chatmsg">
+        <div><img width="20" height="20" src="{{url_for("static",filename='images/user.png')}}" alt="bot"/>
+        </div><p class="text-xs">${content}</p></div>`);
+        textarea.value='';
+        setTimeout(scrollToBottom, 1000);
+        $("#inputarea").attr('disabled','disabled');
+        // pass message to backend and get the answer
+        $.ajax({
+            type: 'POST',
+            url: '/qanda',
+            data: JSON.stringify({'query':content}),
+            contentType: 'application/json',
+            success: function(response) {
+                $("#allchats").append(`<div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
+                <div><img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/></div>
+                <p class="text-xs botbody">${response}</p></div>`);
+                setTimeout(scrollToBottom, 200);
+                $("#inputarea").removeAttr('disabled');
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                $("#inputarea").removeAttr('disabled');
+            }
         });
+    }
+});
         // sound toggling
-        $("#audiomodalon").click(function(){
-            var audio = document.querySelector("audio");
-            audio.currentTime = 0;
-            audio.pause();
-            $("#audiomodalon").addClass('hidden');
-            $("#audiomodaloff").removeClass('hidden');
-        })
-        $("#audiomodaloff").click(function(){
-            $("#audiomodaloff").addClass('hidden');
-            $("#audiomodalon").removeClass('hidden');
-            const audioElement = document.querySelector("audio");
-            audioElement.currentTime = 3 * 60; // Set audio to start from 3.5 minutes
-            audioElement.volume = 0.2; // Set volume to 0.5
-            audioElement.play();
-        });
-        // delete file
-        $(".delete").click(function(){
-            let text = $(this).parent().find('span').text().trim();
-            $.ajax({
-                type: 'POST',
-                url: '/delete_document',
-                data: JSON.stringify({'document':text}),
-                contentType: 'application/json',
-                success: function(response) {
-                    if(response['status']==200){
-                        $("#closemodal").click();
-                        window.location.href = '/'
-                    }
-                    else{
-                        alert('unable to delete file')
-                    }
-                }
-            })
-        })
-    </script>
+$("#audiomodalon").click(function(){
+    var audio = document.querySelector("audio");
+    audio.currentTime = 0;
+    audio.pause();
+    $("#audiomodalon").addClass('hidden');
+    $("#audiomodaloff").removeClass('hidden');
+})
+$("#audiomodaloff").click(function(){
+    $("#audiomodaloff").addClass('hidden');
+    $("#audiomodalon").removeClass('hidden');
+    const audioElement = document.querySelector("audio");
+    audioElement.currentTime = 3 * 60; // Set audio to start from 3.5 minutes
+    audioElement.volume = 0.2; // Set volume to 0.5
+    audioElement.play();
+});
+// delete file
+$(".delete").click(function(){
+    let text = $(this).parent().find('span').text().trim();
+    $.ajax({
+        type: 'POST',
+        url: '/delete_document',
+        data: JSON.stringify({'document':text}),
+        contentType: 'application/json',
+        success: function(response) {
+            if(response['status']==200){
+                $("#closemodal").click();
+                window.location.href = '/'
+            }
+            else{
+                alert('unable to delete file')
+            }
+        }
+    })
+})
+$("#newchat").click(function(){
+    var ulElement = document.getElementById("history");
+    // Get all the <li> elements inside the <ul> using querySelectorAll
+    var liElements = ulElement.querySelectorAll("li");
+    // Get the number of <li> elements
+    var numberOfLiElements = 0;
+    liElements.forEach(function(liElement) {
+    if (!liElement.classList.contains("hidden")) {
+        numberOfLiElements++;
+        }
+    });
+    $.ajax({
+        type:'POST',
+        url: '/session_check',
+        data: JSON.stringify({'session':numberOfLiElements}),
+        contentType: 'application/json',
+    }).done(function(message){
+        if(message=='limit exceeded'){
+            alert('only 5 sessions can be saved');
+        }
+        else{
+            if(numberOfLiElements==0){
+                $('.1').removeClass('hidden');
+            }
+            else{
+                for(let i=0;i<numberOfLiElements;i++){
+                alert(i+1);
+                $(`.${String(i+1)}`).removeClass('hidden');
+            }
+            }
+            $(".chatmsg").removeClass('hidden');
+            $('.emptychat').addClass('hidden');
+        }
+    })
+})
+
+$(".delthischat").click(function(){
+    let chatid = $(this).parent().parent().text().trim().replace('session','');
+    $.ajax({
+        type:'POST',
+        url: '/delete_session',
+        data: JSON.stringify({'session_id':chatid}),
+        contentType: 'application/json',
+    }).done(function(){
+        window.location.href = '/';
+    })
+})
+$(".exportthischat").click(function(){
+    let chatid = $(this).parent().parent().text().trim().replace('session','');
+    $.ajax({
+        type:'POST',
+        url: '/export_session',
+        data: JSON.stringify({'session_id':chatid}),
+        contentType: 'application/json',
+    }).done(function(){
+        alert('session backup is stored in the static/output folder')
+    })
+})
+$(".savethischat").click(function(){
+    let chatid = $(this).parent().parent().text().trim().replace('session','');
+    $.ajax({
+        type:'POST',
+        url: '/save_session',
+        data: JSON.stringify({'session_id':chatid}),
+        contentType: 'application/json',
+    }).done(function(){
+        alert('chat has been saved');
+    })
+})
+
+
+const ulElement = document.getElementById("history");
+ulElement.addEventListener("click", function(event) {
+// Check if the clicked element is an <a> tag inside an <li> tag
+if (event.target.tagName === "A" && event.target.parentElement.tagName === "LI") {
+    const clickedItemText = event.target.innerText;
+    let id = clickedItemText;
+    $.ajax({
+        type:'POST',
+        url: '/load_session',
+        data: JSON.stringify({'session_id':id}),
+        contentType: 'application/json',
+    }).done(function(response){
+        $('.emptychat').addClass('hidden');
+        for (const [key, value] of Object.entries(response)){
+            $("#allchats").append(`<div class="rounded-md userarea p-3 col-start-2 col-end-8 chatmsg">
+            <div><img width="20" height="20" src="{{url_for("static",filename='images/user.png')}}" alt="bot"/>
+            </div><p class="text-xs">${key}</p></div>`);
+            $("#allchats").append(`<div class="rounded-md botarea p-3 col-start-2 col-end-8 chatmsg">
+            <div><img width="20" height="20" src="{{url_for('static',filename='images/icon.png')}}" alt="bot"/></div>
+            <p class="text-xs botbody">${value}</p></div>`);
+        }
+    })
+    }
+});
+
+
+</SCRIPT>
 </body>
 </html>

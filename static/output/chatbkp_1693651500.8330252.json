@@ -1,0 +1,5 @@
+{
+    "1": {
+        "return the output as a html. Question:describe a 4d scanner": " A 4D foot scanner is an imaging system that uses six Microsoft Azure Kinect DK cameras to capture dynamic foot shape data (Figure 2). The scanners are designed for acquiring four-dimensional foot shapes, where two cameras at the bottom and four cameras on top provide complementary views of the feet. To adapt to a minimal focal distance of 50 cm in the spatial domain and temporal domain, the 4D scanner employs six camera modules with different field of view (FOV) settings that capture images from multiple angles simultaneously. The captured point clouds are then processed using computer vision algorithms for 3D reconstruction and pose estimation."
+    }
+}
