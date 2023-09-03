@@ -18,11 +18,11 @@ You can download the model from [here](https://huggingface.co/dnato/ggml-gpt4all
 
 ## Screenshots
 
-![landing page](landing_page.jpg)
-![empty chat](empty_session.jpg)
-![chat](chat.jpg)
-![embeddings](file_processing.jpg)
-![file viewer](file_handle.jpg)
+![landing page](screenshots/landing_page.jpg)
+![empty chat](screenshots/empty_session.jpg)
+![chat](screenshots/chat.jpg)
+![embeddings](screenshots/file_processing.jpg)
+![file viewer](screenshots/file_handle.jpg)
 
 ## Installation
 

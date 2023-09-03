@@ -3,6 +3,7 @@
 - [X] added background music that can be toggled
 - [X] store chat history (only a max of 5 sessions) - *testing*
 - [X] delete chat sessions
+- [ ] fix the response rendering
 - [ ] ability to clipboard the chat
 - [ ] ability to change the llm model in UI
 
