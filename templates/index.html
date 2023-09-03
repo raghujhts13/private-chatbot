@@ -102,7 +102,16 @@
                 <div id="allchats">
                     <div class="rounded-md p-3 col-start-2 col-end-8 emptychat px-5 py-12">
                         Hi, I am your personal chatbot. You would be able to upload and view your files, 
-                        ask me questions about them and retain upto 5 chat sessions.Click on <span class="text-pink-500">New Chat</span> or load an existing one.
+                        ask me questions about them and retain upto 5 chat sessions.Click on <span class="text-pink-500">
+                        New Chat</span> or load an existing <ol><b>Points to remember</b>
+                        <li>
+                            Save the chat before opening a new chat
+                        </li>
+                        <li>
+                            Only 5 chat sessions are saved, so delete an existing session to create a new one, (export your chat
+                            if you need it before deleting)
+                        </li>
+                        </ol>
                     </div>
                     <div class="rounded-md botarea p-3 col-start-2 col-end-8 initchatmsg hidden">
                         <div>
@@ -303,14 +312,6 @@ $("#newchat").click(function(){
             alert('only 5 sessions can be saved');
         }
         else{
-            // if(numberOfLiElements==0){
-            //     $('.1').removeClass('hidden');
-            // }
-            // else{
-            //     for(let i=0;i<numberOfLiElements;i++){
-            //         $(`.${i+2}`).removeClass('hidden');
-            //     }
-            // }
             $(`.${message}`).removeClass('hidden');
             $(".chatmsg").addClass('hidden');
             $(".initchatmsg").addClass('hidden');
