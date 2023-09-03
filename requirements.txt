@@ -1,0 +1,7 @@
+langchain==0.0.274
+chromadb==0.4.7
+dotenv
+flask==2.2.2
+tqdm==4.66.1
+pandas==2.0.3
+gpt4all==1.0.8
